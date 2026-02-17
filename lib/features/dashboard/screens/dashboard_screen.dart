@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yalla_now_delivery/features/auth/controllers/auth_controller.dart';
 import 'package:yalla_now_delivery/features/order/controllers/order_controller.dart';
 import 'package:yalla_now_delivery/features/disbursement/helper/disbursement_helper.dart';
@@ -7,12 +8,12 @@ import 'package:yalla_now_delivery/helper/notification_helper.dart';
 import 'package:yalla_now_delivery/helper/route_helper.dart';
 import 'package:yalla_now_delivery/main.dart';
 import 'package:yalla_now_delivery/util/dimensions.dart';
+import 'package:yalla_now_delivery/util/images.dart';
+import 'package:yalla_now_delivery/util/styles.dart';
 import 'package:yalla_now_delivery/common/widgets/custom_alert_dialog_widget.dart';
-import 'package:yalla_now_delivery/features/dashboard/widgets/bottom_nav_item_widget.dart';
 import 'package:yalla_now_delivery/features/dashboard/widgets/new_request_dialog_widget.dart';
 import 'package:yalla_now_delivery/features/home/screens/home_screen.dart';
 import 'package:yalla_now_delivery/features/profile/screens/profile_screen.dart';
-import 'package:yalla_now_delivery/features/order/screens/order_request_screen.dart';
 import 'package:yalla_now_delivery/features/order/screens/order_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,6 @@ class DashboardScreenState extends State<DashboardScreen> {
 
     _screens = [
       const HomeScreen(),
-      OrderRequestScreen(onTap: () => _setPage(0)),
       const OrderScreen(),
       const ProfileScreen(),
     ];
@@ -144,34 +144,40 @@ class DashboardScreenState extends State<DashboardScreen> {
       child: Scaffold(
         bottomNavigationBar: GetPlatform.isDesktop
             ? const SizedBox()
-            : BottomAppBar(
-                elevation: 5,
-                notchMargin: 5,
-                shadowColor: Colors.grey[300],
-                shape: const CircularNotchedRectangle(),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
-                  child: Row(children: [
-                    BottomNavItemWidget(
-                        iconData: Icons.home,
-                        isSelected: _pageIndex == 0,
-                        onTap: () => _setPage(0)),
-                    BottomNavItemWidget(
-                        iconData: Icons.list_alt_rounded,
-                        isSelected: _pageIndex == 1,
-                        onTap: () {
-                          _navigateRequestPage();
-                        }),
-                    BottomNavItemWidget(
-                        iconData: Icons.shopping_bag,
-                        isSelected: _pageIndex == 2,
-                        onTap: () => _setPage(2)),
-                    BottomNavItemWidget(
-                        iconData: Icons.person,
-                        isSelected: _pageIndex == 3,
-                        onTap: () => _setPage(3)),
-                  ]),
+            : Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildNavItem(
+                      index: 0,
+                      label: 'home'.tr,
+                      svgPath: Images.homeNavIcon,
+                      isSelected: _pageIndex == 0,
+                    ),
+                    _buildNavItem(
+                      index: 1,
+                      label: 'orders'.tr,
+                      svgPath: Images.ordersNavIcon,
+                      isSelected: _pageIndex == 1,
+                    ),
+                    _buildNavItem(
+                      index: 2,
+                      label: 'profile'.tr,
+                      iconData: Icons.person_outline,
+                      isSelected: _pageIndex == 2,
+                    ),
+                  ],
                 ),
               ),
         body: PageView.builder(
@@ -181,6 +187,55 @@ class DashboardScreenState extends State<DashboardScreen> {
           itemBuilder: (context, index) {
             return _screens[index];
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required int index,
+    required String label,
+    String? svgPath,
+    IconData? iconData,
+    required bool isSelected,
+  }) {
+    return Expanded(
+      child: InkWell(
+        onTap: () => _setPage(index),
+        child: Container(
+          margin: const EdgeInsets.all(16),
+          decoration: isSelected
+              ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Theme.of(context).primaryColor,
+                )
+              : null,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              svgPath != null
+                  ? SvgPicture.asset(
+                      svgPath,
+                      colorFilter: ColorFilter.mode(
+                        isSelected ? Colors.white : Colors.grey,
+                        BlendMode.srcIn,
+                      ),
+                    )
+                  : Icon(
+                      iconData,
+                      size: 24,
+                      color: isSelected ? Colors.white : Colors.grey,
+                    ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: robotoMedium.copyWith(
+                  fontSize: Dimensions.fontSizeExtraSmall,
+                  color: isSelected ? Colors.white : Colors.grey,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

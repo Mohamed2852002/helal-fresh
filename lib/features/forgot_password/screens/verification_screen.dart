@@ -1,13 +1,13 @@
 import 'dart:async';
-import 'package:yalla_now_delivery/features/splash/controllers/splash_controller.dart';
 import 'package:yalla_now_delivery/features/forgot_password/controllers/forgot_password_controller.dart';
 import 'package:yalla_now_delivery/helper/route_helper.dart';
 import 'package:yalla_now_delivery/util/dimensions.dart';
 import 'package:yalla_now_delivery/util/styles.dart';
-import 'package:yalla_now_delivery/common/widgets/custom_app_bar_widget.dart';
+import 'package:yalla_now_delivery/util/images.dart';
 import 'package:yalla_now_delivery/common/widgets/custom_button_widget.dart';
 import 'package:yalla_now_delivery/common/widgets/custom_snackbar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -56,78 +56,105 @@ class VerificationScreenState extends State<VerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarWidget(title: 'otp_verification'.tr),
       body: SafeArea(
-          child: Center(
-              child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
         child: Center(
-            child: SizedBox(
-                width: 1170,
-                child: GetBuilder<ForgotPasswordController>(
-                    builder: (forgotPasswordController) {
-                  return Column(children: [
-                    Get.find<SplashController>().configModel!.demo!
-                        ? Text(
-                            'for_demo_purpose'.tr,
-                            style: robotoRegular,
-                          )
-                        : RichText(
-                            text: TextSpan(children: [
-                            TextSpan(
-                                text: 'enter_the_verification_sent_to'.tr,
-                                style: robotoRegular.copyWith(
-                                    color: Theme.of(context).disabledColor)),
-                            TextSpan(
-                                text: ' $_number',
-                                style: robotoMedium.copyWith(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .color)),
-                          ])),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 39, vertical: 35),
-                      child: PinCodeTextField(
-                        length: 4,
-                        appContext: context,
-                        keyboardType: TextInputType.number,
-                        animationType: AnimationType.slide,
-                        pinTheme: PinTheme(
-                          shape: PinCodeFieldShape.box,
-                          fieldHeight: 60,
-                          fieldWidth: 60,
-                          borderWidth: 1,
-                          borderRadius:
-                              BorderRadius.circular(Dimensions.radiusSmall),
-                          selectedColor:
-                              Theme.of(context).primaryColor.withOpacity(0.2),
-                          selectedFillColor: Colors.white,
-                          inactiveFillColor:
-                              Theme.of(context).disabledColor.withOpacity(0.2),
-                          inactiveColor:
-                              Theme.of(context).primaryColor.withOpacity(0.2),
-                          activeColor:
-                              Theme.of(context).primaryColor.withOpacity(0.4),
-                          activeFillColor:
-                              Theme.of(context).disabledColor.withOpacity(0.2),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+            child: Center(
+              child: GetBuilder<ForgotPasswordController>(
+                builder: (forgotPasswordController) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child:
+                              SvgPicture.asset(Images.forgetPassProfileIcon)),
+                      const SizedBox(height: Dimensions.paddingSizeExtraLarge),
+                      Text('phone_number_confirmation'.tr,
+                          style: robotoBold.copyWith(fontSize: 24)),
+                      const SizedBox(height: Dimensions.paddingSizeSmall),
+                      Text('confirmation_code_sent'.tr,
+                          style: robotoRegular.copyWith(
+                              color: Theme.of(context).disabledColor)),
+                      Text(' $_number',
+                          style: robotoMedium.copyWith(
+                              color: Theme.of(context).primaryColor)),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 16, right: 16, top: 16),
+                        child: PinCodeTextField(
+                          length: 4,
+                          appContext: context,
+                          keyboardType: TextInputType.number,
+                          animationType: AnimationType.slide,
+                          pinTheme: PinTheme(
+                            shape: PinCodeFieldShape.box,
+                            fieldHeight: 60,
+                            fieldWidth: 60,
+                            borderWidth: 1,
+                            borderRadius:
+                                BorderRadius.circular(Dimensions.radiusSmall),
+                            selectedColor: Theme.of(context)
+                                .primaryColor
+                                .withValues(alpha: 0.2),
+                            selectedFillColor: Colors.white,
+                            inactiveFillColor: Theme.of(context).cardColor,
+                            inactiveColor: Theme.of(context)
+                                .disabledColor
+                                .withValues(alpha: 0.1),
+                            activeColor: Theme.of(context)
+                                .primaryColor
+                                .withValues(alpha: 0.4),
+                            activeFillColor: Theme.of(context).cardColor,
+                          ),
+                          animationDuration: const Duration(milliseconds: 300),
+                          backgroundColor: Colors.transparent,
+                          enableActiveFill: true,
+                          onChanged:
+                              forgotPasswordController.updateVerificationCode,
+                          beforeTextPaste: (text) => true,
                         ),
-                        animationDuration: const Duration(milliseconds: 300),
-                        backgroundColor: Colors.transparent,
-                        enableActiveFill: true,
-                        onChanged:
-                            forgotPasswordController.updateVerificationCode,
-                        beforeTextPaste: (text) => true,
                       ),
-                    ),
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Text(
-                        'did_not_receive_the_code'.tr,
+                        '${'resend_in'.tr}\n${_seconds}',
                         style: robotoRegular.copyWith(
-                            color: Theme.of(context).disabledColor),
+                            color: Theme.of(context).primaryColor),
+                        textAlign: TextAlign.center,
                       ),
+                      const SizedBox(height: 16),
+                      !forgotPasswordController.isLoading
+                          ? CustomButtonWidget(
+                              buttonText: 'next'.tr,
+                              backgroundColor: const Color(0xFF0D77BC),
+                              onPressed: forgotPasswordController
+                                          .verificationCode.length ==
+                                      4
+                                  ? () {
+                                      forgotPasswordController
+                                          .verifyToken(_number)
+                                          .then((value) {
+                                        if (value.isSuccess) {
+                                          Get.toNamed(
+                                              RouteHelper.getResetPasswordRoute(
+                                                  _number,
+                                                  forgotPasswordController
+                                                      .verificationCode,
+                                                  'reset-password'));
+                                        } else {
+                                          showCustomSnackBar(value.message);
+                                        }
+                                      });
+                                    }
+                                  : null,
+                            )
+                          : const Center(child: CircularProgressIndicator()),
+                      const SizedBox(height: 16),
                       TextButton(
                         onPressed: _seconds < 1
                             ? () {
@@ -135,6 +162,7 @@ class VerificationScreenState extends State<VerificationScreen> {
                                     .forgetPassword(widget.number)
                                     .then((value) {
                                   if (value.isSuccess) {
+                                    _startTimer();
                                     showCustomSnackBar(
                                         'resend_code_successful'.tr,
                                         isError: false);
@@ -145,35 +173,19 @@ class VerificationScreenState extends State<VerificationScreen> {
                               }
                             : null,
                         child: Text(
-                            '${'resend'.tr}${_seconds > 0 ? ' ($_seconds)' : ''}'),
+                          'resend_code'.tr,
+                          style: robotoRegular.copyWith(
+                              color: Theme.of(context).primaryColor),
+                        ),
                       ),
-                    ]),
-                    forgotPasswordController.verificationCode.length == 4
-                        ? !forgotPasswordController.isLoading
-                            ? CustomButtonWidget(
-                                buttonText: 'verify'.tr,
-                                onPressed: () {
-                                  forgotPasswordController
-                                      .verifyToken(_number)
-                                      .then((value) {
-                                    if (value.isSuccess) {
-                                      Get.toNamed(
-                                          RouteHelper.getResetPasswordRoute(
-                                              _number,
-                                              forgotPasswordController
-                                                  .verificationCode,
-                                              'reset-password'));
-                                    } else {
-                                      showCustomSnackBar(value.message);
-                                    }
-                                  });
-                                },
-                              )
-                            : const Center(child: CircularProgressIndicator())
-                        : const SizedBox.shrink(),
-                  ]);
-                }))),
-      ))),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

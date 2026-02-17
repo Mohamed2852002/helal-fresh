@@ -1,6 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:image_compression_flutter/image_compression_flutter.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:yalla_now_delivery/features/splash/controllers/splash_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,25 +36,26 @@ class NetworkInfoHelper {
   }
 
   static Future<Uint8List> compressImage(XFile file) async {
-    final ImageFile input =
-        ImageFile(filePath: file.path, rawBytes: await file.readAsBytes());
-    final Configuration config = Configuration(
-      outputType: ImageOutputType.webpThenPng,
-      useJpgPngNativeCompressor: false,
-      quality: (input.sizeInBytes / 1048576) < 2
-          ? 90
-          : (input.sizeInBytes / 1048576) < 5
-              ? 50
-              : (input.sizeInBytes / 1048576) < 10
-                  ? 10
-                  : 1,
+    final inputBytes = await file.readAsBytes();
+    final inputSizeMB = inputBytes.length / 1048576;
+    final quality = inputSizeMB < 2
+        ? 90
+        : inputSizeMB < 5
+            ? 50
+            : inputSizeMB < 10
+                ? 10
+                : 1;
+
+    final result = await FlutterImageCompress.compressWithList(
+      inputBytes,
+      quality: quality,
+      format: CompressFormat.webp,
     );
-    final ImageFile output = await compressor
-        .compress(ImageFileConfiguration(input: input, config: config));
+
     if (kDebugMode) {
-      print('Input size : ${input.sizeInBytes / 1048576}');
-      print('Output size : ${output.sizeInBytes / 1048576}');
+      print('Input size : $inputSizeMB');
+      print('Output size : ${result.length / 1048576}');
     }
-    return output.rawBytes;
+    return result;
   }
 }

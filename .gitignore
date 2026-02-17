@@ -3,6 +3,10 @@
 *.log
 *.pyc
 *.swp
+*.jks
+*.keystore
+key.jks
+key.properties
 .DS_Store
 .atom/
 .buildlog/

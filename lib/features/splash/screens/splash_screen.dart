@@ -6,9 +6,7 @@ import 'package:yalla_now_delivery/features/splash/controllers/splash_controller
 import 'package:yalla_now_delivery/features/notification/domain/models/notification_body_model.dart';
 import 'package:yalla_now_delivery/helper/route_helper.dart';
 import 'package:yalla_now_delivery/util/app_constants.dart';
-import 'package:yalla_now_delivery/util/dimensions.dart';
 import 'package:yalla_now_delivery/util/images.dart';
-import 'package:yalla_now_delivery/util/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -115,6 +113,13 @@ class SplashScreenState extends State<SplashScreen> {
             }
           }
         });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Failed to load configuration. Please check your URL or server settings.'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 10),
+        ));
       }
     });
   }
@@ -122,17 +127,13 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       key: _globalKey,
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Image.asset(Images.logo, width: 200),
-            const SizedBox(height: Dimensions.paddingSizeSmall),
-            Text('delivery'.tr,
-                style: robotoMedium, textAlign: TextAlign.center),
-          ]),
-        ),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Image.asset(Images.splashImage),
+          Image.asset(Images.splashText, width: 200),
+        ]),
       ),
     );
   }

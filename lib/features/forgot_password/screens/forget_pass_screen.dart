@@ -11,6 +11,7 @@ import 'package:yalla_now_delivery/common/widgets/custom_button_widget.dart';
 import 'package:yalla_now_delivery/common/widgets/custom_snackbar_widget.dart';
 import 'package:yalla_now_delivery/common/widgets/custom_text_field_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class ForgetPassScreen extends StatefulWidget {
@@ -29,68 +30,89 @@ class _ForgetPassScreenState extends State<ForgetPassScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarWidget(title: 'forgot_password'.tr),
       body: SafeArea(
           child: Center(
               child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
         child: Center(
-            child: SizedBox(
-                width: 1170,
-                child: Column(children: [
-                  Image.asset(Images.forgot, height: 220),
-                  Padding(
-                    padding: const EdgeInsets.all(30),
-                    child: Text('please_enter_mobile'.tr,
-                        style: robotoRegular, textAlign: TextAlign.center),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular(Dimensions.radiusSmall),
-                      color: Theme.of(context).cardColor,
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: SvgPicture.asset(Images.forgetPassProfileIcon)),
+          const SizedBox(height: Dimensions.paddingSizeExtraLarge),
+          Text('forgot_password'.tr, style: robotoBold.copyWith(fontSize: 30)),
+          const SizedBox(height: Dimensions.paddingSizeSmall),
+          Text('please_enter_mobile_number'.tr,
+              style: robotoRegular.copyWith(
+                  fontSize: Dimensions.fontSizeDefault,
+                  color: Theme.of(context).disabledColor),
+              textAlign: TextAlign.center),
+          const SizedBox(height: 50),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('phone_label'.tr,
+                  style: robotoRegular.copyWith(
+                      fontSize: Dimensions.fontSizeSmall)),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+                  color: Theme.of(context).cardColor,
+                  border: Border.all(
+                      color: Theme.of(context).primaryColor.withOpacity(0.1)),
+                ),
+                child: Row(children: [
+                  CountryCodePicker(
+                    onChanged: (CountryCode countryCode) {
+                      _countryDialCode = countryCode.dialCode;
+                    },
+                    initialSelection: _countryDialCode,
+                    favorite: [_countryDialCode!],
+                    showDropDownButton: true,
+                    padding: EdgeInsets.zero,
+                    dialogBackgroundColor: Theme.of(context).cardColor,
+                    backgroundColor: Theme.of(context).cardColor,
+                    showFlagMain: true,
+                    textStyle: robotoRegular.copyWith(
+                      fontSize: Dimensions.fontSizeLarge,
+                      color: Theme.of(context).textTheme.bodyLarge!.color,
                     ),
-                    child: Row(children: [
-                      CountryCodePicker(
-                        onChanged: (CountryCode countryCode) {
-                          _countryDialCode = countryCode.dialCode;
-                        },
-                        initialSelection: _countryDialCode,
-                        favorite: [_countryDialCode!],
-                        showDropDownButton: true,
-                        padding: EdgeInsets.zero,
-                        dialogBackgroundColor: Theme.of(context).cardColor,
-                        backgroundColor: Theme.of(context).cardColor,
-                        showFlagMain: true,
-                        textStyle: robotoRegular.copyWith(
-                          fontSize: Dimensions.fontSizeLarge,
-                          color: Theme.of(context).textTheme.bodyLarge!.color,
-                        ),
-                      ),
-                      Expanded(
-                          child: CustomTextFieldWidget(
-                        controller: _numberController,
-                        inputType: TextInputType.phone,
-                        inputAction: TextInputAction.done,
-                        hintText: 'phone'.tr,
-                        onSubmit: (text) => GetPlatform.isWeb
-                            ? _forgetPass(_countryDialCode!)
-                            : null,
-                      )),
-                    ]),
                   ),
-                  const SizedBox(height: Dimensions.paddingSizeLarge),
-                  GetBuilder<ForgotPasswordController>(
-                      builder: (forgotPasswordController) {
-                    return !forgotPasswordController.isLoading
-                        ? CustomButtonWidget(
-                            buttonText: 'next'.tr,
-                            onPressed: () => _forgetPass(_countryDialCode!),
-                          )
-                        : const Center(child: CircularProgressIndicator());
-                  }),
-                ]))),
+                  Expanded(
+                      child: CustomTextFieldWidget(
+                    controller: _numberController,
+                    inputType: TextInputType.phone,
+                    inputAction: TextInputAction.done,
+                    hintText: 'phone'.tr,
+                    border: false,
+                    onSubmit: (text) => GetPlatform.isWeb
+                        ? _forgetPass(_countryDialCode!)
+                        : null,
+                  )),
+                ]),
+              ),
+            ],
+          ),
+          const SizedBox(height: Dimensions.paddingSizeLarge),
+          GetBuilder<ForgotPasswordController>(
+              builder: (forgotPasswordController) {
+            return !forgotPasswordController.isLoading
+                ? CustomButtonWidget(
+                    buttonText: 'send_verification_code'.tr,
+                    backgroundColor: const Color(0xFF0D77BC),
+                    onPressed: () => _forgetPass(_countryDialCode!),
+                  )
+                : const Center(child: CircularProgressIndicator());
+          }),
+          const SizedBox(height: 100),
+        ])),
       ))),
     );
   }

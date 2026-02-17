@@ -1,5 +1,7 @@
 class Images {
-  static const String logo = 'assets/image/logo.png';
+  static const String logo = 'assets/icon/logo.png';
+  static const String splashText = 'assets/icon/splash_text.png';
+  static const String splashImage = 'assets/icon/splash_image.png';
   static const String call = 'assets/image/call.png';
   static const String lock = 'assets/image/lock.png';
   static const String english = 'assets/image/english.png';
@@ -46,4 +48,12 @@ class Images {
 
   ///Svg Images
   static const String changePasswordBgImage = 'assets/image/change_password_bg_image.svg';
+  static const String homeNavIcon = 'assets/svg/home_nav_icon.svg';
+  static const String ordersNavIcon = 'assets/svg/orders_nav_icon.svg';
+  static const String dollarSign = 'assets/svg/dollar_sign.svg';
+  static const String orderBox = 'assets/svg/order_box.svg';
+  static const String editIcon = 'assets/svg/edit_icon.svg';
+  static const String riderSignInIcon = 'assets/svg/rider_sign_in_icon.svg';
+  static const String riderSignInButtonIcon = 'assets/svg/rider_sign_in_button_icon.svg';
+  static const String forgetPassProfileIcon = 'assets/svg/forget_pass_profile_icon.svg';
 }

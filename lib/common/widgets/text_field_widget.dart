@@ -22,6 +22,7 @@ class TextFieldWidget extends StatefulWidget {
   final String? titleName;
   final bool title;
   final bool isRequired;
+  final Widget? suffixIcon;
 
   const TextFieldWidget({
     super.key,
@@ -42,6 +43,7 @@ class TextFieldWidget extends StatefulWidget {
     this.titleName,
     this.title = true,
     this.isRequired = false,
+    this.suffixIcon,
   });
 
   @override
@@ -123,7 +125,7 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
                         color: Theme.of(context).hintColor.withOpacity(0.3)),
                     onPressed: _toggle,
                   )
-                : null,
+                : widget.suffixIcon,
           ),
           onTap: widget.onTap as void Function()?,
           onSubmitted: (text) => widget.nextFocus != null
