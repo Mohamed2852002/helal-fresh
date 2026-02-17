@@ -1,4 +1,5 @@
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yalla_now_delivery/features/auth/controllers/auth_controller.dart';
 import 'package:yalla_now_delivery/features/language/controllers/language_controller.dart';
 import 'package:yalla_now_delivery/features/profile/controllers/profile_controller.dart';
@@ -8,7 +9,6 @@ import 'package:yalla_now_delivery/helper/route_helper.dart';
 import 'package:yalla_now_delivery/util/dimensions.dart';
 import 'package:yalla_now_delivery/util/images.dart';
 import 'package:yalla_now_delivery/util/styles.dart';
-import 'package:yalla_now_delivery/common/widgets/custom_button_widget.dart';
 import 'package:yalla_now_delivery/common/widgets/custom_snackbar_widget.dart';
 import 'package:yalla_now_delivery/common/widgets/custom_text_field_widget.dart';
 import 'package:flutter/material.dart';
@@ -34,45 +34,66 @@ class SignInScreen extends StatelessWidget {
     _passwordController.text = Get.find<AuthController>().getUserPassword();
 
     return Scaffold(
-      body: SafeArea(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).primaryColor,
+              const Color(0xff2D9B5F), // Light Blue
+              // Green/Primary
+            ],
+          ),
+        ),
+        child: SafeArea(
           child: Center(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-          child: Center(
-            child: SizedBox(
-              width: 1170,
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
               child: GetBuilder<AuthController>(builder: (authController) {
                 return Column(children: [
-                  Image.asset(Images.logo, width: 200),
-                  const SizedBox(height: Dimensions.paddingSizeExtraLarge),
-                  Text('sign_in'.tr.toUpperCase(),
-                      style: robotoBlack.copyWith(fontSize: 30)),
-                  const SizedBox(height: 50),
                   Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: const BoxDecoration(
+                          color: Colors.white, shape: BoxShape.circle),
+                      child: SvgPicture.asset(Images.riderSignInIcon)),
+                  const SizedBox(height: Dimensions.paddingSizeSmall),
+                  Text('drivers_portal'.tr,
+                      style: robotoBold.copyWith(
+                          fontSize: 30, color: Colors.white)),
+                  Text('helal_fresh'.tr,
+                      style: robotoRegular.copyWith(
+                          fontSize: Dimensions.fontSizeLarge,
+                          color: Colors.white70)),
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
                     decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular(Dimensions.radiusSmall),
-                      color: Theme.of(context).cardColor,
-                      boxShadow: Get.isDarkMode
-                          ? null
-                          : [
-                              BoxShadow(
-                                  color: Colors.grey[200]!,
-                                  spreadRadius: 1,
-                                  blurRadius: 5)
-                            ],
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 10)
+                      ],
                     ),
                     child: Column(children: [
+                      Text('sign_in'.tr,
+                          style: robotoBold.copyWith(
+                              fontSize: 24, color: Colors.black)),
+                      const SizedBox(height: Dimensions.paddingSizeLarge),
                       CustomTextFieldWidget(
                         hintText: 'phone'.tr,
                         controller: _phoneController,
                         focusNode: _phoneFocus,
                         nextFocus: _passwordFocus,
                         inputType: TextInputType.phone,
-                        divider: true,
+                        divider: false,
                         isPhone: true,
-                        border: false,
+                        border: true,
+                        showTitle: true,
                         onCountryChanged: (CountryCode countryCode) {
                           countryDialCode = countryCode.dialCode;
                         },
@@ -85,16 +106,19 @@ class SignInScreen extends StatelessWidget {
                             : Get.find<LocalizationController>()
                                 .locale
                                 .countryCode,
+                        suffixIcon: Icons.phone,
                       ),
+                      const SizedBox(height: Dimensions.paddingSizeLarge),
                       CustomTextFieldWidget(
                         hintText: 'password'.tr,
                         controller: _passwordController,
                         focusNode: _passwordFocus,
                         inputAction: TextInputAction.done,
                         inputType: TextInputType.visiblePassword,
-                        prefixIcon: Icons.lock,
+                        prefixIcon: Icons.lock_outlined,
                         isPassword: true,
-                        border: false,
+                        border: true,
+                        showTitle: true,
                         onSubmit: (text) => GetPlatform.isWeb
                             ? _login(
                                 authController,
@@ -105,82 +129,113 @@ class SignInScreen extends StatelessWidget {
                               )
                             : null,
                       ),
-                    ]),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(children: [
-                    Expanded(
-                      child: ListTile(
-                        onTap: () => authController.toggleRememberMe(),
-                        leading: Checkbox(
-                          activeColor: Theme.of(context).primaryColor,
-                          value: authController.isActiveRememberMe,
-                          onChanged: (bool? isChecked) =>
-                              authController.toggleRememberMe(),
-                        ),
-                        title: Text('remember_me'.tr),
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                        horizontalTitleGap: 0,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () =>
-                          Get.toNamed(RouteHelper.getForgotPassRoute()),
-                      child: Text('${'forgot_password'.tr}?'),
-                    ),
-                  ]),
-                  const SizedBox(height: 50),
-                  !authController.isLoading
-                      ? CustomButtonWidget(
-                          buttonText: 'sign_in'.tr,
-                          onPressed: () => _login(
-                              authController,
-                              _phoneController,
-                              _passwordController,
-                              countryDialCode!,
-                              context),
-                        )
-                      : const Center(child: CircularProgressIndicator()),
-                  SizedBox(
-                      height: Get.find<SplashController>()
-                              .configModel!
-                              .toggleDmRegistration!
-                          ? Dimensions.paddingSizeSmall
-                          : 0),
-                  Get.find<SplashController>()
-                          .configModel!
-                          .toggleDmRegistration!
-                      ? TextButton(
-                          style: TextButton.styleFrom(
-                            minimumSize: const Size(1, 40),
-                          ),
-                          onPressed: () {
-                            Get.toNamed(
-                                RouteHelper.getDeliverymanRegistrationRoute());
-                          },
-                          child: RichText(
-                              text: TextSpan(children: [
-                            TextSpan(
-                                text: '${'join_as_a'.tr} ',
+                      const SizedBox(height: Dimensions.paddingSizeSmall),
+                      Row(children: [
+                        Expanded(
+                          child: ListTile(
+                            onTap: () => authController.toggleRememberMe(),
+                            leading: Checkbox(
+                              activeColor: Theme.of(context).primaryColor,
+                              value: authController.isActiveRememberMe,
+                              onChanged: (bool? isChecked) =>
+                                  authController.toggleRememberMe(),
+                            ),
+                            title: Text('remember_me'.tr,
                                 style: robotoRegular.copyWith(
                                     color: Theme.of(context).disabledColor)),
-                            TextSpan(
-                                text: 'delivery_man'.tr,
-                                style: robotoMedium.copyWith(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .color)),
-                          ])),
-                        )
-                      : const SizedBox(),
+                            contentPadding: EdgeInsets.zero,
+                            dense: true,
+                            horizontalTitleGap: 0,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              Get.toNamed(RouteHelper.getForgotPassRoute()),
+                          child: Text('${'forgot_password'.tr}?',
+                              style: robotoRegular.copyWith(
+                                  color: Theme.of(context).primaryColor)),
+                        ),
+                      ]),
+                      const SizedBox(height: Dimensions.paddingSizeLarge),
+                      !authController.isLoading
+                          ? Container(
+                              height: 50,
+                              width: 1170,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    const Color(0xFF2A93D5), // Light Blue
+                                    Theme.of(context).primaryColor, // Green
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                    Dimensions.radiusDefault),
+                              ),
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        Dimensions.radiusDefault),
+                                  ),
+                                ),
+                                onPressed: () => _login(
+                                    authController,
+                                    _phoneController,
+                                    _passwordController,
+                                    countryDialCode!,
+                                    context),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                        Images.riderSignInButtonIcon,
+                                        width: 20,
+                                        height: 20,
+                                        colorFilter: const ColorFilter.mode(
+                                            Colors.white, BlendMode.srcIn)),
+                                    const SizedBox(
+                                        width: Dimensions.paddingSizeSmall),
+                                    Text('sign_in'.tr,
+                                        textAlign: TextAlign.center,
+                                        style: robotoBold.copyWith(
+                                          color: Colors.white,
+                                          fontSize: Dimensions.fontSizeLarge,
+                                        )),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : const Center(child: CircularProgressIndicator()),
+                    ]),
+                  ),
+                  const SizedBox(height: Dimensions.paddingSizeExtraLarge),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'dont_have_account'.tr,
+                        style: robotoRegular.copyWith(color: Colors.white),
+                      ),
+                      const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                      InkWell(
+                        onTap: () {
+                          // Action for contacting admin, maybe open url or show dialog
+                        },
+                        child: Text(
+                          'contact_admin'.tr,
+                          style: robotoBold.copyWith(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
                 ]);
               }),
             ),
           ),
         ),
-      )),
+      ),
     );
   }
 

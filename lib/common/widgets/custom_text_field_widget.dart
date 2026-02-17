@@ -28,6 +28,7 @@ class CustomTextFieldWidget extends StatefulWidget {
   final String? countryDialCode;
   final Function(CountryCode countryCode)? onCountryChanged;
   final bool border;
+  final IconData? suffixIcon;
 
   const CustomTextFieldWidget({
     super.key,
@@ -53,6 +54,7 @@ class CustomTextFieldWidget extends StatefulWidget {
     this.countryDialCode,
     this.onCountryChanged,
     this.border = true,
+    this.suffixIcon,
   });
 
   @override
@@ -171,7 +173,10 @@ class CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
                       color: Theme.of(context).hintColor.withOpacity(0.3)),
                   onPressed: _toggle,
                 )
-              : null,
+              : widget.suffixIcon != null
+                  ? Icon(widget.suffixIcon,
+                      color: Theme.of(context).hintColor.withOpacity(0.3))
+                  : null,
         ),
         onSubmitted: (text) => widget.nextFocus != null
             ? FocusScope.of(context).requestFocus(widget.nextFocus)

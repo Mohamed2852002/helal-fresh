@@ -26,11 +26,11 @@ class DateConverterHelper {
   }
 
   static DateTime convertStringToDatetime(String dateTime) {
-    return DateFormat("yyyy-MM-ddTHH:mm:ss.SSS").parse(dateTime);
+    return DateTime.parse(dateTime);
   }
 
   static DateTime isoStringToLocalDate(String dateTime) {
-    return DateFormat('yyyy-MM-ddTHH:mm:ss.SSS').parse(dateTime);
+    return DateTime.parse(dateTime);
   }
 
   static String isoStringToLocalTimeOnly(String dateTime) {

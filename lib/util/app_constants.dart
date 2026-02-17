@@ -7,7 +7,7 @@ class AppConstants {
 
   ///Flutter sdk 3.22.3
 
-  static const String baseUrl = 'https://oxygenmart.online';
+  static const String baseUrl = 'https://helal-fresh.com';
 
   static const String configUri = '/api/v1/config';
   static const String forgetPasswordUri =

@@ -33,7 +33,11 @@ class SplashController extends GetxController implements GetxService {
   Future<bool> getConfigData() async {
     Response response = await splashServiceInterface.getConfigData();
     bool isSuccess = false;
-    if (response.statusCode == 200) {
+    print('====> Config statusCode: ${response.statusCode}');
+    print('====> Config body type: ${response.body.runtimeType}');
+    print(
+        '====> Config body snippet: ${response.body.toString().substring(0, response.body.toString().length > 200 ? 200 : response.body.toString().length)}');
+    if (response.statusCode == 200 && response.body is Map<String, dynamic>) {
       _data = response.body;
       _configModel = ConfigModel.fromJson(response.body);
       print('Config Data: ${_configModel!.webSocketUri}');
@@ -41,6 +45,8 @@ class SplashController extends GetxController implements GetxService {
       print('Config Data: ${_configModel!.webSocketKey}');
 
       isSuccess = true;
+    } else if (response.statusCode == 200) {
+      print('Error: API returned 200 but body is not a Map: ${response.body}');
     } else {
       isSuccess = false;
     }
